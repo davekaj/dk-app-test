@@ -7,15 +7,15 @@
 //probably digital ocean or aws or firebase to host 
 //react and reduc
 //and a docket image so it will run on linux instance on digtal ocean 
+//need to do TEST DRIVE DEVELOPMENT!!
 
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 
 
 class App extends Component {
-  constructor(){
+  constructor() {
     super();
     this.state = {
       response: ["hi"]
@@ -25,32 +25,66 @@ class App extends Component {
 
   }
 
-  async getGaiaInfo() {
-    let url = 'http://gaia-2-node0.testnets.interblock.io:46657/dump_consensus_state';
-    let myServerResponse = await axios.get('http://localhost:8080/dumpConsensusState')
+  componentWillMount() {
+    this.getGaiaInfo();
+  }
 
-    let copyState = this.state.response;
-    // console.log(myServerResponse);
-    let arrayValidators = myServerResponse.data.validators;
-    console.log(arrayValidators);
+
+  async getGaiaInfo() {
+    let myServerResponse = await axios.get('http://localhost:8080/getValidators')
+    let arrayValidators = myServerResponse.data[0];
     this.setState({
       response: arrayValidators
     })
-
-    console.log(this.state.response);
   }
 
   render() {
+    
+    // Now I have an array of objects
+    const gaia2validators = Object.values(this.state.response)
+    
+    const mapTable = gaia2validators.map((oneValidator, i) => {
+
+      //now i have an array of the values of a single validator. the three values are date, atoms, and public key
+      let validatorValues = Object.values(gaia2validators[i]);
+
+      //date conversions
+      const dateRecorded = new Date(validatorValues[1])
+      const stringDateRecorded = dateRecorded.toDateString()
+      const daysOnline = ((Date.now() - dateRecorded)/1000/60/60/24).toFixed(2)
+
+      return (
+        <tr>
+          <th>{validatorValues[2]}</th>
+          <th>{stringDateRecorded}</th>
+          <th>{daysOnline}</th>
+          <th>{validatorValues[0]}</th>
+        </tr>
+      )
+    })
+    
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">Welcome to atomstats</h1>
         </header>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+          Below is a list of current validators for the gaia2 network
         </p>
-        <button className='test' id='test' onClick={()=>{this.getGaiaInfo()}}>Get gaia info</button>
+        <div id="gaia2validators">
+        <table>
+            <tbody>
+              <tr>
+                <th>Validator Public Key</th>
+                <th>1st date recorded</th>
+                <th>Days Consecutively online</th>
+                <th>Atoms staked</th>
+              </tr>
+              {mapTable}
+            </tbody>
+          </table>
+
+        </div>
       </div>
     );
   }
