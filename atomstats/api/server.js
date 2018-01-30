@@ -25,33 +25,49 @@ admin.initializeApp({
     databaseURL: "https://atomstats-c54dd.firebaseio.com"
 });
 
-// app.use(express.static(__dirname + './data/db'))
-
-// app.get('*', (req, res)=> {
-//     res.sendFile(path.resolve((__dirname + './../public/index.html')))
-// })
-
 app.listen(PORT, () => {
     console.log('Server Started on ' + PORT);
     console.log('Press CTRL + C to stop server');
 })
 
-
-
-
 /***********************************APP STARTS ************************ */
+let db = admin.database();
+// let databaseAccesString = '';
+let databaseSeedString = '/gaia2validators/';
+// let ref = db.ref('/');
+let latestValidators = [];
+const gaia2url = 'http://gaia-2-node0.testnets.interblock.io:46657/dump_consensus_state'
+const gaia1url = 'http://gaia-1-node0.testnets.interblock.io:46657/dump_consensus_state'
+
 
 
 //******************************* API CALLS ************************************** */
 
-app.get('/getValidators', async (req, res) => {
+app.get('/getGaia2Validators', async (req, res) => {
+    try {
+        // const gaia2ConsensusState = await axios.get(gaia2url);
+        // console.log(gaia2ConsensusState.data.result.round_state.Validators);
+        // res.send(gaia2ConsensusState.data.result.round_state.Validators)
+        databaseAccesString = '/gaia2validators/'
+        const dbValidators = await readValidatorData('/gaia2validators')
+
+        console.log('gaia2 query received')
+        res.send(dbValidators);
+    } catch (err) {
+        console.log(error);
+    }
+})
+
+app.get('/getGaia1Validators', async (req, res) => {
     try {
         // const gaia2ConsensusState = await axios.get(gaia2url);
         // console.log(gaia2ConsensusState.data.result.round_state.Validators);
         // res.send(gaia2ConsensusState.data.result.round_state.Validators)
 
-        const dbValidators = await readValidatorData('/gaia2validators')
+        databaseAccesString = '/gaia1validators/'
+        const dbValidators = await readValidatorData('/gaia1validators')
 
+        console.log('gaia1 query received')
         res.send(dbValidators);
     } catch (err) {
         console.log(error);
@@ -61,17 +77,10 @@ app.get('/getValidators', async (req, res) => {
 
 
 
-
 //*********************************SERVER FUNCTIONALITY ********************************************** */
-var db = admin.database();
-var ref = db.ref("gaia2validators");
-let latestValidators = [];
-const gaia2url = 'http://gaia-2-node0.testnets.interblock.io:46657/dump_consensus_state'
 
-
-
-function writeValidatorData(pubkey, atoms) {
-    admin.database().ref('gaia2validators/' + pubkey).set({
+function writeValidatorData(pubkey, atoms, network) {
+    admin.database().ref(network + pubkey).set({
         validatorPubkey: pubkey,
         dateRecorded: Date.now(),
         atomCount: atoms,
@@ -80,14 +89,14 @@ function writeValidatorData(pubkey, atoms) {
 
 async function readValidatorData(dbEndpoint) {
     let emptyArray = [];
-    await ref.once("value", function (snapshot) {
+    await db.ref(dbEndpoint).once("value", function (snapshot) {
         emptyArray.push(snapshot.val());
     });
     return emptyArray;
 }
 
-async function editValidatorData(atoms, pubKey) {
-    let refPubkey = db.ref('gaia2validators/' + pubKey);
+async function editValidatorData(atoms, pubKey, network) {
+    let refPubkey = db.ref(network + pubKey);
     // console.log(pubKey);
     let dataHolder = [];
     let oldData = await refPubkey.once("value", function (snapshot) {
@@ -103,18 +112,29 @@ async function editValidatorData(atoms, pubKey) {
     }
 
     let updates = {}
-    updates[`gaia2validators/${pubKey}`] = updatedInfo;
+    updates[`${databaseAccesString}${pubKey}`] = updatedInfo;
 
     return admin.database().ref().update(updates);
 
 }
 
 
-async function getLatestValidators(req, res) {
+async function getLatestValidators(validatorEndPoint) {
+
+    let whichURL = '';
+
+    switch (validatorEndPoint) {
+        case '/gaia2validators/':
+            whichURL = gaia2url
+            break
+        case '/gaia1validators/':
+            whichURL = gaia1url
+    }
+
     try {
-        const gaia2ConsensusState = await axios.get(gaia2url);
+        const networkConsensusState = await axios.get(whichURL);
         //console.log(gaia2ConsensusState.data.result.round_state.Validators);
-        latestValidators = gaia2ConsensusState.data.result.round_state.Validators.validators
+        latestValidators = networkConsensusState.data.result.round_state.Validators.validators
         // console.log(latestValidators);
     } catch (err) {
         console.log(err);
@@ -122,19 +142,19 @@ async function getLatestValidators(req, res) {
 }
 
 //only ran at the start
-async function seedDatabase() {
-    await getLatestValidators();
+async function seedDatabase(network) {
+    await getLatestValidators(network);
 
     for (let i = 0; i < latestValidators.length; i++) {
         // console.log(latestValidators[i].pub_key.data, latestValidators[i].voting_power)
-        writeValidatorData(latestValidators[i].pub_key.data, latestValidators[i].voting_power)
+        writeValidatorData(latestValidators[i].pub_key.data, latestValidators[i].voting_power, network)
     }
 }
 
 
-async function removeDisconnectedValidatorsFromDatabase() {
-    await getLatestValidators()
-    let validatorListDatabase = await readValidatorData('/gaia2validators');
+async function removeDisconnectedValidatorsFromDatabase(network) {
+    await getLatestValidators(network)
+    let validatorListDatabase = await readValidatorData(network);
     let validatorPubKeyArray = Object.keys(validatorListDatabase[0]);
 
     //parse down the data returned from cosmos endpoint to just an array of the public keys 
@@ -153,14 +173,14 @@ async function removeDisconnectedValidatorsFromDatabase() {
         //means we did not find a match, which means this validator has went offline since the last recording on our end
         if (exists == -1) {
             console.log("Our saved database key no longer exists on live network, thus it has gone down. Key is: " + valPubKey)
-            admin.database().ref('gaia2validators/' + valPubKey).remove();
+            admin.database().ref(network + valPubKey).remove();
         }
     }
 }
 
-async function addNewValidatorsToDataBase() {
-    await getLatestValidators()
-    let shortenedValidatorList = await readValidatorData('/gaia2validators'); //named shorted because it happens after removing disconnect ones from out DB
+async function addNewValidatorsToDataBase(network) {
+    await getLatestValidators(network)
+    let shortenedValidatorList = await readValidatorData(network); //named shorted because it happens after removing disconnect ones from out DB
     let shortenedListKeysArray = Object.keys(shortenedValidatorList[0]);
 
     let keysToAtomsObject = {};
@@ -184,11 +204,11 @@ async function addNewValidatorsToDataBase() {
         //write in a new validator
         if (liveExistsInDatabase == -1) {
             console.log(`We found a new validator on the blockchain. We added it in our database for today. Key is: ${livePubKeys}`)
-            writeValidatorData(livePubKeys, latestValidators[j].voting_power);
+            writeValidatorData(livePubKeys, latestValidators[j].voting_power, network);
             //check if their atom count has been changed, and fix it if it has
         } else {
             if (liveAtomCount != keysToAtomsObject[livePubKeys]) {
-                editValidatorData(liveAtomCount, livePubKeys);
+                editValidatorData(liveAtomCount, livePubKeys, network);
                 console.log(`Validator ${livePubKeys} in the DB has changed the amount of atoms staked. Old amount: ${keysToAtomsObject[livePubKeys]}. New amount: ${liveAtomCount}`)
             }
 
@@ -197,21 +217,21 @@ async function addNewValidatorsToDataBase() {
     }
 }
 
-async function updateDatabase() {
-    let checkIfDatabaseIsSeeded = await readValidatorData('/gaia2validators');
-
+//entry point to all updating 
+async function updateDatabase(network) {
+    let checkIfDatabaseIsSeeded = await readValidatorData(network);
     //if its empty, we just seed for the first time, and we dont have to update
     if (checkIfDatabaseIsSeeded[0] === null) {
-        seedDatabase();
+        seedDatabase(network);
     } else {
-        await removeDisconnectedValidatorsFromDatabase();
-        await addNewValidatorsToDataBase()
+        await removeDisconnectedValidatorsFromDatabase(network);
+        await addNewValidatorsToDataBase(network)
     }
 }
 
 
 //run update upon starting the server
-updateDatabase();
+updateDatabase(databaseSeedString);
 
 
 /*
