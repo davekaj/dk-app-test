@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 
 //FIREBASE
 const admin = require('firebase-admin');
-const serviceAccount = require('/Users/davidkajpust/Desktop/cloud-providers/atomstats-c54dd-firebase-adminsdk-ff80m-e92ff3e492.json');
+const serviceAccount = require('/Users/dustinbrickwood/Documents/atomstats-c54dd-firebase-adminsdk-ff80m-e92ff3e492.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
