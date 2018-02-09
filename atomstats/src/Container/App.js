@@ -49,6 +49,7 @@ class App extends Component {
   //******************************************************************* */
   //app functions 
   async getNetworkInfo(network) {
+
     let myServerResponse = await axios.get(`http://localhost:8080/${network}`)
     let arrayValidators = myServerResponse.data[0];
 
@@ -68,6 +69,7 @@ class App extends Component {
   }
 
   async getBlockHeight(networkURL) {
+
     let consensusState = await axios.get(networkURL)
     let blockHeight = consensusState.data.result.round_state.Height
     this.setState({
@@ -117,7 +119,16 @@ class App extends Component {
   //   this.getBlockHeight(blockHeightURL)
   // }
 
+
+
   render() {
+    let date1 = '2018-02-07 T 22:38:43.540653818 -05:00'
+    let date2='2018-02-07 T 22:38:44.540653818 -05:00'
+
+    let diff = Math.abs(new Date(date1.replace(/-/g,'/') - new Date(date2.replace(/-/g,'/'))));
+    console.log(diff);
+
+
     return (
       <div className="App container-fluid">
         <div>

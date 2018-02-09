@@ -50,7 +50,7 @@ app.get('/getGaia2Validators', async (req, res) => {
         // res.send(gaia2ConsensusState.data.result.round_state.Validators)
         databaseAccesString = '/gaia2validators/'
         const dbValidators = await readValidatorData('/gaia2validators')
-
+        
         console.log('gaia2 query received')
         res.send(dbValidators);
     } catch (err) {
@@ -95,6 +95,7 @@ async function readValidatorData(dbEndpoint) {
     return emptyArray;
 }
 
+// Updates the db by refrencing the pubkey updating that record
 async function editValidatorData(atoms, pubKey, network) {
     let refPubkey = db.ref(network + pubKey);
     // console.log(pubKey);
@@ -211,9 +212,7 @@ async function addNewValidatorsToDataBase(network) {
                 editValidatorData(liveAtomCount, livePubKeys, network);
                 console.log(`Validator ${livePubKeys} in the DB has changed the amount of atoms staked. Old amount: ${keysToAtomsObject[livePubKeys]}. New amount: ${liveAtomCount}`)
             }
-
         }
-
     }
 }
 
