@@ -40,14 +40,14 @@ class Header extends Component {
       return (
         <div>
           <div className="row col-xs-12">
-            <div className="col-xs-3 header-left block-height">Block Height: <br/>{this.props.blockchainInfoHeaderProp.blockHeight} </div>
-            <div className="col-xs-3 header-right atom-price">Atom Price: <br/>${this.state.atomPrice}</div>
-            <div className="col-xs-3 header-right atom-price">Number of Nodes:<br/>{numberOfNodesLength}</div>
+            <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 header-left block-height">Block Height: <br/>{this.props.blockchainInfoHeaderProp.blockHeight} </div>
+            <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 header-right atom-price">Atom Price: <br/>${this.state.atomPrice}</div>
+            <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 header-right atom-price">Number of Nodes:<br/>{numberOfNodesLength}</div>
           </div>
           <div className="row">
-          <div className="col-xs-3 block-tx">Transactions Graph</div>
-          <div className="col-xs-3 header-right block-time">Block Time</div>
-          <div className="col-xs-3 header-right block-time">Block Percentage</div>
+          <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 block-tx">Transactions Graph</div>
+          <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 header-right block-time">Block Time</div>
+          <div className="col-md-3 col-lg-3 col-xl-3 col-xs-12 header-right block-time">Block Percentage</div>
           </div>
         </div>
       );
