@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import HeadStyle from './Header.css';
+
 
 class Header extends Component {
     constructor() {
@@ -32,13 +34,15 @@ class Header extends Component {
   
     render() {
       return (
-        <div className="Header row">
-          <div className="App-header col-xs-12">
-            <div className="col-xs-3 header-left">Block Height: {this.props.blockchainInfoHeaderProp.blockHeight} </div>
-            <div className="App-title col-xs-6 header-middle">atomstats</div>
-            <div className="col-xs-3 header-right">Atom Price: $ {this.state.atomPrice}</div>
+        <div>
+          <div className="row col-xs-12">
+            <div className="col-xs-3 header-left block-height">Block Height: {this.props.blockchainInfoHeaderProp.blockHeight} </div>
+            <div className="col-xs-3 header-right atom-price">Atom Price: $ {this.state.atomPrice}</div>
           </div>
-  
+          <div className="row">
+          <div className="col-xs-3 block-tx">Transactions Graph</div>
+          <div className="col-xs-3 header-right block-time">Block Time</div>
+          </div>
         </div>
       );
     }

@@ -1,0 +1,43 @@
+.block-height {
+
+    border: 1px solid #337AFF;
+    height: 100%;
+    margin-left: 7%;
+    margin-top:2.5%;
+    height: 150px;
+    width:  350px;
+    padding: 20px;
+}
+
+.atom-price {
+
+    border: 1px solid #337AFF;
+    height: 100%;
+    margin-left: 1%;
+    margin-top:2.5%;
+    height: 150px;
+    width:  350px;
+    padding: 20px;
+}
+
+.block-tx{
+
+    border: 1px solid #337AFF;
+    height: 150px;
+    width: 350px;
+    margin-left:7.7%;
+    margin-top:1%;
+    margin-bottom: 2.5%;
+    padding: 20px;
+}
+
+.block-time {
+
+    border: 1px solid #337AFF;
+    height: 100%;
+    margin-left: 1%;
+    margin-top:1%;
+    height: 150px;
+    width:  350px;
+    padding: 20px;
+}

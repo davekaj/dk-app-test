@@ -25,6 +25,7 @@ import InfoBar from '../component/InfoBar';
 import Header from '../component/Header';
 import './App.css';
 import axios from 'axios';
+import SideNav from '../component/SideNav';
 
 
 class App extends Component {
@@ -122,16 +123,12 @@ class App extends Component {
 
 
   render() {
-    let date1 = '2018-02-07 T 22:38:43.540653818 -05:00'
-    let date2='2018-02-07 T 22:38:44.540653818 -05:00'
-
-    let diff = Math.abs(new Date(date1.replace(/-/g,'/') - new Date(date2.replace(/-/g,'/'))));
-    console.log(diff);
-
 
     return (
+     
       <div className="App container-fluid">
         <div>
+       
           <Header
             blockchainInfoHeaderProp={this.state.blockchainInfo}>
           </Header>
@@ -147,6 +144,7 @@ class App extends Component {
             blockchainInfoDropdownProp={this.state.blockchainInfo}
             networkHandler={this.handleNetworkDropdown}>
           </Dropdown>
+          <SideNav />
           <ValidatorList
             validatorListProp={this.state.validatorListToPass}
             currentNetworkValidatorListProp={this.state.currentNetworkView}
@@ -154,6 +152,9 @@ class App extends Component {
           </ValidatorList>
         </div>
       </div>
+
+     
+
     );
   }
 }

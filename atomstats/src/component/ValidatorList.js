@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import List from './ValidatorList.css';
 
 class ValidatorList extends Component {
     constructor() {
@@ -67,7 +68,7 @@ class ValidatorList extends Component {
       })
   
       return (
-        <div id="networkValidators">
+        <div className="main" id="networkValidators">
           <table>
             <tbody>
               <tr>
