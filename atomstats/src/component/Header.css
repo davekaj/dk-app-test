@@ -1,7 +1,6 @@
 .block-height {
 
     border: 1px solid #337AFF;
-    height: 100%;
     margin-left: 7%;
     margin-top:2.5%;
     height: 150px;
@@ -12,7 +11,6 @@
 .atom-price {
 
     border: 1px solid #337AFF;
-    height: 100%;
     margin-left: 1%;
     margin-top:2.5%;
     height: 150px;
@@ -34,7 +32,6 @@
 .block-time {
 
     border: 1px solid #337AFF;
-    height: 100%;
     margin-left: 1%;
     margin-top:1%;
     height: 150px;

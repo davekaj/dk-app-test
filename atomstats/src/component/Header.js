@@ -33,15 +33,21 @@ class Header extends Component {
     }
   
     render() {
+
+      let numberOfNodes = (this.props.infoBarValidatorListProp)
+      let numberOfNodesLength = Object.keys(numberOfNodes).length
+
       return (
         <div>
           <div className="row col-xs-12">
-            <div className="col-xs-3 header-left block-height">Block Height: {this.props.blockchainInfoHeaderProp.blockHeight} </div>
-            <div className="col-xs-3 header-right atom-price">Atom Price: $ {this.state.atomPrice}</div>
+            <div className="col-xs-3 header-left block-height">Block Height: <br/>{this.props.blockchainInfoHeaderProp.blockHeight} </div>
+            <div className="col-xs-3 header-right atom-price">Atom Price: <br/>${this.state.atomPrice}</div>
+            <div className="col-xs-3 header-right atom-price">Number of Nodes:<br/>{numberOfNodesLength}</div>
           </div>
           <div className="row">
           <div className="col-xs-3 block-tx">Transactions Graph</div>
           <div className="col-xs-3 header-right block-time">Block Time</div>
+          <div className="col-xs-3 header-right block-time">Block Percentage</div>
           </div>
         </div>
       );

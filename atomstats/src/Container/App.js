@@ -130,12 +130,9 @@ class App extends Component {
         <div>
        
           <Header
-            blockchainInfoHeaderProp={this.state.blockchainInfo}>
+            blockchainInfoHeaderProp={this.state.blockchainInfo}
+            infoBarValidatorListProp={this.state.validatorListToPass}>
           </Header>
-          <InfoBar
-            infoBarValidatorListProp={this.state.validatorListToPass}
-            blockchainInfoInfobarProp={this.state.blockchainInfo} >
-          </InfoBar>
           <Graphs
             blockchainGraphsProp={this.state.blockchainInfo}>
           </Graphs>
