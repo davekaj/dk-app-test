@@ -42,3 +42,19 @@
     height: 70px;
     width: 70px;
 }
+
+.side-items{
+    padding-top: 250%;
+    vertical-align: middle;
+}
+
+.side-item{
+    border: 1px solid #337AFF;
+    height:75px;
+}
+
+.side-name{
+    color: #337AFF;
+    vertical-align: middle;
+    text-align: center;
+}
